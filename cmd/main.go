@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/JordenNorton/poly-prompt-backend/config"
 	"github.com/JordenNorton/poly-prompt-backend/db"
+	"github.com/JordenNorton/poly-prompt-backend/handlers"
 	"log"
 	"net/http"
 )
@@ -22,6 +23,8 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello World")
 	})
+	http.HandleFunc("/vocabularies", handlers.GetAllVocabulary)
+	http.HandleFunc("/vocabulary", handlers.CreateVocabulary)
 
 	log.Println("Listening on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
