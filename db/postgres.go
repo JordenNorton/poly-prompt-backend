@@ -12,7 +12,7 @@ var DB *sql.DB
 
 // Connect initialises a connection to the PostgreSQL database
 func Connect() error {
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s??sslmode=%s",
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_HOST"),
