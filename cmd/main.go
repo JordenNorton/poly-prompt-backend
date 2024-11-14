@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"github.com/JordenNorton/poly-prompt-backend/config"
 	"github.com/JordenNorton/poly-prompt-backend/db"
 	"github.com/JordenNorton/poly-prompt-backend/handlers"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
@@ -20,14 +20,17 @@ func main() {
 	}
 	defer db.Close()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello World")
-	})
-	http.HandleFunc("/vocabularies", handlers.GetAllVocabulary)
-	http.HandleFunc("/vocabulary", handlers.CreateVocabulary)
+	router := mux.NewRouter()
+	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello World"))
+	}).Methods("GET")
+	router.HandleFunc("/vocabularies", handlers.GetAllVocabulary).Methods("GET")
+	router.HandleFunc("/vocabulary", handlers.CreateVocabulary).Methods("POST")
+	router.HandleFunc("/vocabulary/{id}", handlers.UpdateVocabulary).Methods("PUT")
+	router.HandleFunc("/vocabulary/{id}", handlers.DeleteVocabulary).Methods("DELETE")
 
 	log.Println("Listening on :8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err := http.ListenAndServe(":8080", router); err != nil {
 		log.Fatal(err)
 	}
 }

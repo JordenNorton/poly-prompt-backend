@@ -3,6 +3,7 @@ module github.com/JordenNorton/poly-prompt-backend
 go 1.22.1
 
 require (
+	github.com/gorilla/mux v1.8.1
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/joho/godotenv v1.5.1
 )
