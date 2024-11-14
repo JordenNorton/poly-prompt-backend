@@ -56,7 +56,25 @@ func CreateVocabulary(w http.ResponseWriter, r *http.Request) {
 
 func GetAllVocabulary(w http.ResponseWriter, r *http.Request) {
 
-	rows, err := db.DB.Query(`SELECT id, type, word, translation, difficulty FROM vocabulary`)
+	page, limit := 1, 10 //default values
+	queryPage := r.URL.Query().Get("page")
+	queryLimit := r.URL.Query().Get("limit")
+
+	if queryPage != "" {
+		if p, err := strconv.Atoi(queryPage); err == nil && p > 0 {
+			page = p
+		}
+	}
+
+	if queryLimit != "" {
+		if l, err := strconv.Atoi(queryLimit); err == nil && l > 0 {
+			limit = l
+		}
+	}
+
+	offset := (page - 1) * limit
+
+	rows, err := db.DB.Query(`SELECT id, type, word, translation, difficulty FROM vocabulary ORDER BY id LIMIT $1 OFFSET $2`, limit, offset)
 	if err != nil {
 		log.Println("Error fetching vocabulary")
 		http.Error(w, "Failed to retrieve entries", http.StatusInternalServerError)
@@ -74,7 +92,11 @@ func GetAllVocabulary(w http.ResponseWriter, r *http.Request) {
 		vocabList = append(vocabList, vocab)
 	}
 
-	json.NewEncoder(w).Encode(vocabList)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"page":  page,
+		"limit": limit,
+		"data":  vocabList,
+	})
 
 }
 
